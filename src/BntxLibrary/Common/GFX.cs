@@ -51,16 +51,16 @@ public enum ChannelFormat : int
 [Flags]
 public enum GpuAccessFlags : ushort
 {
-    IsVertexBuffer = 0x4,
-    IsIndexBuffer = 0x8,
-    IsUniformBuffer = 0x10,
-    IsTexture = 0x20,
+    VertexBuffer = 0x4,
+    IndexBuffer = 0x8,
+    UniformBuffer = 0x10,
+    Texture = 0x20,
     TransferDestination = 0x40,
     RenderTargetColor = 0x80,
     RenderTargetDepth = 0x100,
-    IsIndirectDraw = 0x200,
-    IsDisplayTexture = 0x400,
-    IsCount = 0x800
+    IndirectDraw = 0x200,
+    DisplayTexture = 0x400,
+    Count = 0x800
 }
 
 public enum ImageFormat : uint
