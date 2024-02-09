@@ -10,9 +10,12 @@ Binary NX Texture Archive
   - [String Table](#string-table)
   - [Texture Dictionary](#texture-dictionary)
     - [Texture Dictionary Entry](#texture-dictionary-entry)
-  - [Texture Array](#texture-array)
+  - [Texture Info Array](#texture-info-array)
     - [Texture Info](#texture-info)
+  - [Texture Data](#texture-data)
   - [Relocation Table](#relocation-table)
+    - [Relocation Table Section](#relocation-table-section)
+    - [Relocation Table Entry](#relocation-table-entry)
 
 ## Header
 
@@ -57,8 +60,8 @@ The memory pool is a constant `320`-byte buffer following immediately after the 
 
 ## Texture Pointer Array
 
-The texture pointer array is an array of `64`-bit pointers into the [texture array](#texture-array) following immediately after the memory pool.
-0
+The texture pointer array is an array of `64`-bit pointers into the [texture info array](#texture-info-array) following immediately after the memory pool.
+
 The length of the array is defined in the [texture container](#texture-container)
 
 | Offset | Type     | Description           |
@@ -107,7 +110,7 @@ The texture dictionary is an array of entries following immidiately after the st
 | `0x04` | `u16[2]` | Indices        |
 | `0x08` | `void*`  | String Pointer |
 
-## Texture Array
+## Texture Info Array
 
 The texture dictionary is followed by an array of texture info blocks.
 
@@ -119,49 +122,96 @@ The length of this array is defined in the header.
 
 ### Texture Info
 
-| Offset | Type     | Description                      |
-| :----- | :------- | :------------------------------- |
-| `0x00` | `u32`    | Magic (always BRTI `0x42525449`) |
-| `0x04` | `u32`    | Next Block Offset                |
-| `0x08` | `u32`    | Size                             |
-| `0x0C` | `u32`    | Reserved                         |
-| `0x10` | `u8`     | Flags                            |
-| `0x11` | `u8`     | Texture Storage Dimension        |
-| `0x12` | `u16`    | Tile Mode                        |
-| `0x14` | `u16`    | Swizzle                          |
-| `0x16` | `u16`    | Mip Count                        |
-| `0x18` | `u16`    | Sample Count                     |
-| `0x1A` | `u16`    | Reserved                         |
-| `0x1C` | `u32`    | Texture Format                   |
-| `0x20` | `u32`    | GPU Access Flags                 |
-| `0x24` | `s32`    | Width                            |
-| `0x28` | `s32`    | Height                           |
-| `0x2C` | `s32`    | Depth                            |
-| `0x30` | `u32`    | Array Layers                     |
-| `0x34` | `u32`    | Texture Layout (1)               |
-| `0x38` | `u32`    | Texture Layout (2)               |
-| `0x3C` | `u8[20]` | Reserved                         |
-| `0x50` | `u32`    | Texture Size                     |
-| `0x54` | `u32`    | Texture Data Alignment           |
-| `0x58` | `u32`    | Channel Type                     |
-| `0x5C` | `u8`     | Texture Dimension                |
-| `0x5D` | `u8[3]`  | Padding                          |
-| `0x60` | `void*`  | Texture Name Pointer             |
-| `0x68` | `void*`  | Parent Container Pointer         |
-| `0x70` | `void*`  | Mip Map Level Array Pointer      |
-| `0x78` | `void*`  | User Data Pointer                |
-| `0x80` | `void*`  | Texture Pointer                  |
-| `0x88` | `void*`  | Texture View Pointer             |
-| `0x90` | `u64`    | Runtime Descriptor Slot          |
-| `0x98` | `void*`  | User Data Dictionary Pointer     |
+| Offset | Type     | Description                          |
+| :----- | :------- | :----------------------------------- |
+| `0x00` | `u32`    | Magic (always BRTI `0x42525449`)     |
+| `0x04` | `u32`    | Next Block Offset                    |
+| `0x08` | `u32`    | Size                                 |
+| `0x0C` | `u32`    | Reserved                             |
+| `0x10` | `u8`     | Flags                                |
+| `0x11` | `u8`     | Texture Storage Dimension            |
+| `0x12` | `u16`    | Tile Mode                            |
+| `0x14` | `u16`    | Swizzle                              |
+| `0x16` | `u16`    | Mip Count                            |
+| `0x18` | `u16`    | Sample Count                         |
+| `0x1A` | `u16`    | Reserved                             |
+| `0x1C` | `u32`    | Texture Format                       |
+| `0x20` | `u32`    | GPU Access Flags                     |
+| `0x24` | `s32`    | Width                                |
+| `0x28` | `s32`    | Height                               |
+| `0x2C` | `s32`    | Depth                                |
+| `0x30` | `u32`    | Array Layers                         |
+| `0x34` | `u32`    | Texture Layout (1)                   |
+| `0x38` | `u32`    | Texture Layout (2)                   |
+| `0x3C` | `u8[20]` | Reserved                             |
+| `0x50` | `u32`    | Texture Size                         |
+| `0x54` | `u32`    | Texture Data Alignment               |
+| `0x58` | `u32`    | Channel Type                         |
+| `0x5C` | `u8`     | Texture Dimension                    |
+| `0x5D` | `u8[3]`  | Padding                              |
+| `0x60` | `void*`  | Texture Name Pointer                 |
+| `0x68` | `void*`  | Parent Container Pointer             |
+| `0x70` | `void**` | Mip Map Pointer Array Pointer        |
+| `0x78` | `void*`  | User Data Pointer                    |
+| `0x80` | `void*`  | In-Place Texture Region Pointer      |
+| `0x88` | `void*`  | In-Place Texture View Region Pointer |
+| `0x90` | `u64`    | Runtime Descriptor Slot              |
+| `0x98` | `void*`  | User Data Dictionary Pointer         |
 
-## Relocation Table
+The header is immediately followed by the `0x100`-byte in-place texture region and the `0x100`-byte in-place texture view region.
+
+| Offset  | Type        | Description         |
+| :------ | :---------- | :------------------ |
+| `0x0A0` | `u8[0x100]` | Texture Buffer      |
+| `0x1A0` | `u8[0x100]` | Texture View Buffer |
+
+These two regions are followed by an array of pointers to the mip map data in the data block.
+
+The length of this array is defined by the `Mip Count` in the header.
+
+| Offset  | Type       | Description           |
+| :------ | :--------- | :-------------------- |
+| `0x2A0` | `void*[n]` | Mip Map Data Pointers |
+
+## Texture Data
+
+The texture data header follows immediately after the [texture info array](#texture-info-array).
 
 | Offset | Type  | Description                      |
 | :----- | :---- | :------------------------------- |
-| `0x00` | `u32` | Magic (always _RLT `0x544C525F`) |
-| `0x04` | `u32` | Position                         |
-| `0x08` | `u32` | Section Count                    |
+| `0x00` | `u32` | Magic (always BRTD `0x44545242`) |
+| `0x04` | `u32` | Next Block Offset                |
+| `0x08` | `u32` | Size                             |
 | `0x0C` | `u32` | Reserved                         |
 
-The relocation table is aligned to `0x8` bytes.
+The header is immediately followed by the texture data header. 
+
+## Relocation Table
+
+*Documentation provided by Watertoon. [Source](https://epd.zeldamods.org/wiki/Common_nn::util#Relocation_Tables).*
+
+| Offset | Type  | Description                      |
+| :----- | :---- | :------------------------------- |
+| `0x0`  | `u32` | Magic (always _RLT `0x544C525F`) |
+| `0x4`  | `u32` | Offset to this table             |
+| `0x8`  | `u32` | Section count                    |
+| `0xC`  | `u32` | Reserved                         |
+
+### Relocation Table Section
+
+| Offset | Type    | Description                                                         |
+| :----- | :------ | :------------------------------------------------------------------ |
+| `0x00` | `void*` | Base Pointer (when null, the region is relative to the BNTX header) |
+| `0x08` | `u32`   | Region Offset (relative to BinaryFileHeader or Base Pointer)        |
+| `0x0C` | `u32`   | Region Size                                                         |
+| `0x10` | `u32`   | Base Entry Index                                                    |
+| `0x14` | `u32`   | Entry Count                                                         |
+
+### Relocation Table Entry
+
+| Offset | Type | Description                                                  |
+| :----- | :--- | :----------------------------------------------------------- |
+| 0x0    | u32  | Region Offset (relative to section region offset)            |
+| 0x4    | u16  | Array Count                                                  |
+| 0x6    | u8   | Per-array Pointer Count                                      |
+| 0x7    | u8   | Array Stride (in pointer count, so `stride * sizeof(void*)`) |
