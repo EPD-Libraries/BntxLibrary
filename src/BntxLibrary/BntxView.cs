@@ -34,7 +34,7 @@ public ref struct BntxView
             throw new InvalidDataException("Invalid magic!");
         }
 
-        reader.Move(MEMORY_POOL_SIZE);
+        reader.Seek(header.TextureContainer.TextureInfoArrayPointer);
         TexturePointers = reader.ReadSpan<ulong>(header.TextureContainer.TextureCount);
 
         if (reader.Endianness.IsNotSystemEndianness()) {
@@ -42,13 +42,13 @@ public ref struct BntxView
 
             // This block is after the dictionary, but
             // to avoid a second condition I do it now
-            reader.Seek((int)header.TextureContainer.TextureInfoArrayPointer);
+            reader.Seek(header.TextureContainer.TextureInfoArrayPointer);
             for (int i = 0; i < header.TextureContainer.TextureCount; i++) {
                 BntxTextureSection.Reverse(ref reader);
             }
         }
 
-        reader.Seek((int)header.TextureContainer.DictionaryPointer);
+        reader.Seek(header.TextureContainer.DictionaryPointer);
         TexturesDictionary = new(ref reader);
 
         Name = reader.Data[
