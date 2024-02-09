@@ -1,4 +1,5 @@
 ﻿using BntxLibrary.Common;
+using Revrs;
 
 namespace BntxLibrary.Structures.Graphics;
 
@@ -29,5 +30,22 @@ public struct TextureInfo
     public int ArrayLength;
     public uint PackedTextureLayout;
 
-    // TODO: impl reverser
+    public class Reverser : IStructReverser
+    {
+        public static void Reverse(in Span<byte> slice)
+        {
+            slice[0x02..0x04].Reverse();
+            slice[0x04..0x06].Reverse();
+            slice[0x06..0x08].Reverse();
+            slice[0x08..0x0A].Reverse();
+            // 0x0A..0x0C Reserved
+            slice[0x0C..0x10].Reverse();
+            slice[0x10..0x14].Reverse();
+            slice[0x14..0x18].Reverse();
+            slice[0x18..0x1C].Reverse();
+            slice[0x1C..0x20].Reverse();
+            slice[0x20..0x24].Reverse();
+            slice[0x24..0x28].Reverse();
+        }
+    }
 }
