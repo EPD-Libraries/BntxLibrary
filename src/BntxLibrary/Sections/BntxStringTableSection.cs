@@ -1,8 +1,8 @@
 ﻿using Revrs;
 
-namespace BntxLibrary.Sections.Common;
+namespace BntxLibrary.Sections;
 
-public struct StringTableSection
+public struct BntxStringTableSection
 {
     public static void Reverse(ref RevrsReader reader)
     {
@@ -10,7 +10,8 @@ public struct StringTableSection
         int count = reader.Read<int>();
         reader.Move(0x4);
 
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++)
+        {
             short size = reader.Read<short>();
             reader.Move(size);
             reader.Align(0x2);
