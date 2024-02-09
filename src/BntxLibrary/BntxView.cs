@@ -1,11 +1,8 @@
 ﻿using BntxLibrary.Common;
 using BntxLibrary.Extensions;
 using BntxLibrary.Sections;
-using BntxLibrary.Sections.Common;
 using BntxLibrary.Structures;
-using BntxLibrary.Structures.Graphics;
 using Revrs;
-using Revrs.Extensions;
 using System.Runtime.CompilerServices;
 
 namespace BntxLibrary;
@@ -19,6 +16,11 @@ public ref struct BntxView
     public ResDicView TexturesDictionary;
     public Span<ulong> TexturePointers;
     public Span<byte> Name;
+
+    public readonly int Count {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get => TexturePointers.Length;
+    }
 
     public BntxView(ref RevrsReader reader)
     {
@@ -38,13 +40,13 @@ public ref struct BntxView
         TexturePointers = reader.ReadSpan<ulong>(header.TextureContainer.TextureCount);
 
         if (reader.Endianness.IsNotSystemEndianness()) {
-            StringTableSection.Reverse(ref reader);
+            BntxStringTableSection.Reverse(ref reader);
 
             // This block is after the dictionary, but
             // to avoid a second condition I do it now
             reader.Seek(header.TextureContainer.TextureInfoArrayPointer);
             for (int i = 0; i < header.TextureContainer.TextureCount; i++) {
-                BntxTextureSection.Reverse(ref reader);
+                BntxTextureView.Reverse(ref reader);
             }
         }
 
@@ -59,15 +61,22 @@ public ref struct BntxView
         Header.BinaryFileHeader.BoM = reader.Endianness;
     }
 
-    public readonly ResTextureInfo this[ReadOnlySpan<byte> key] {
+    public readonly BntxTextureView this[ReadOnlySpan<byte> key] {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get {
-            int offset = (int)TexturePointers[TexturesDictionary[key]];
-            return Data[offset..].Read<ResTextureInfo>();
+            int offset = Convert.ToInt32(TexturePointers[TexturesDictionary[key]]);
+            return new(Data, offset);
         }
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public readonly BntxTextureView this[int index] {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get {
+            int offset = Convert.ToInt32(TexturePointers[index]);
+            return new(Data, offset);
+        }
+    }
+
     public readonly Span<byte> GetUtf8FromPtr<T>(T ptr) where T : unmanaged, IConvertible
     {
         int offset = ptr.ToInt32(null);
@@ -77,5 +86,23 @@ public ref struct BntxView
     public readonly string GetStringFromPtr<T>(T ptr) where T : unmanaged, IConvertible
     {
         return GetUtf8FromPtr(ptr).ToManaged();
+    }
+
+    public readonly Enumerator GetEnumerator() => new(this);
+
+    public ref struct Enumerator(BntxView bntx)
+    {
+        private readonly BntxView _bntx = bntx;
+        private int _index = -1;
+
+        public readonly BntxTextureView Current {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get => _bntx[_index];
+        }
+
+        public bool MoveNext()
+        {
+            return ++_index < _bntx.Count;
+        }
     }
 }
