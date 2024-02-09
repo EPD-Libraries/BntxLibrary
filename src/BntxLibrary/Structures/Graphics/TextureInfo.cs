@@ -28,4 +28,6 @@ public struct TextureInfo
     public int Depth;
     public int ArrayLength;
     public uint PackedTextureLayout;
+
+    // TODO: impl reverser
 }

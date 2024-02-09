@@ -53,4 +53,6 @@ public struct ResTextureInfo
 
     [FieldOffset(0x98)]
     public ulong UserDataDictionaryPointer;
+
+    // TODO: impl reverser
 }

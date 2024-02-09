@@ -2,15 +2,15 @@
 using Revrs;
 using System.Runtime.CompilerServices;
 
-namespace BntxLibrary.Sections.Common;
+namespace BntxLibrary.Common;
 
-public ref struct ImmutableResDic
+public ref struct ResDicView
 {
     public ResDicHeader Header;
     public Span<ResDicEntry> Entries;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public ImmutableResDic(ref RevrsReader reader)
+    public ResDicView(ref RevrsReader reader)
     {
         Header = reader.Read<ResDicHeader, ResDicHeader.Reverser>();
         Entries = reader.ReadSpan<ResDicEntry, ResDicEntry.Reverser>(Header.Count + 1);

@@ -1,26 +1,26 @@
-﻿using BntxLibrary.Extensions;
+﻿using BntxLibrary.Common;
+using BntxLibrary.Extensions;
 using BntxLibrary.Sections;
 using BntxLibrary.Sections.Common;
 using BntxLibrary.Structures;
 using BntxLibrary.Structures.Graphics;
 using Revrs;
 using Revrs.Extensions;
-using System.Numerics;
 using System.Runtime.CompilerServices;
 
 namespace BntxLibrary;
 
-public ref struct ImmutableBntx
+public ref struct BntxView
 {
     public const int MEMORY_POOL_SIZE = 0x140;
 
     public readonly Span<byte> Data;
     public BntxHeader Header;
-    public ImmutableResDic TexturesDictionary;
+    public ResDicView TexturesDictionary;
     public Span<ulong> TexturePointers;
     public Span<byte> Name;
 
-    public ImmutableBntx(ref RevrsReader reader)
+    public BntxView(ref RevrsReader reader)
     {
         Data = reader.Data;
 
@@ -38,13 +38,13 @@ public ref struct ImmutableBntx
         TexturePointers = reader.ReadSpan<ulong>(header.TextureContainer.TextureCount);
 
         if (reader.Endianness.IsNotSystemEndianness()) {
-            ImmutableStringTable.Reverse(ref reader);
+            StringTableSection.Reverse(ref reader);
 
             // This block is after the dictionary, but
             // to avoid a second condition I do it now
             reader.Seek((int)header.TextureContainer.TextureInfoArrayPointer);
             for (int i = 0; i < header.TextureContainer.TextureCount; i++) {
-                ImmutableBntxTexture.Reverse(ref reader);
+                BntxTextureSection.Reverse(ref reader);
             }
         }
 

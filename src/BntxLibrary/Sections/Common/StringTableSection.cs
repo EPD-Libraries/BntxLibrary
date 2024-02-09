@@ -2,7 +2,7 @@
 
 namespace BntxLibrary.Sections.Common;
 
-public struct ImmutableStringTable
+public struct StringTableSection
 {
     public static void Reverse(ref RevrsReader reader)
     {
