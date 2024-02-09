@@ -10,5 +10,10 @@
   <ItemGroup>
     <ProjectReference Include="..\BntxLibrary\BntxLibrary.csproj" />
   </ItemGroup>
+    
+  <ItemGroup>
+    <Content Include="../../data/Common.bntx" Link="Assets/Common.bntx" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="../../data/Map.bntx" Link="Assets/Map.bntx" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
 </Project>
