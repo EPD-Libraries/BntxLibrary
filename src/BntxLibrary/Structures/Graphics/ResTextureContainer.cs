@@ -13,11 +13,11 @@ public struct ResTextureContainer
 {
     public TargetPlatform TargetPlatform;
     public int TextureCount;
-    public ulong TextureInfoArrayPointer;
-    public ulong DataSize;
-    public ulong DictionaryPointer;
-    public ulong MemoryPoolPointer;
-    public ulong UserMemoryPoolPointer;
+    public long TextureInfoPointerArrayPointer;
+    public long TextureDataPointer;
+    public long DictionaryPointer;
+    public long MemoryPoolPointer;
+    public long UserMemoryPoolPointer;
     public int BaseMemoryPoolOffset;
     public uint Reserved;
 

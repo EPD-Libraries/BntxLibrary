@@ -36,7 +36,7 @@ public ref struct BntxView
             throw new InvalidDataException("Invalid magic!");
         }
 
-        reader.Seek(header.TextureContainer.TextureInfoArrayPointer);
+        reader.Seek(header.TextureContainer.TextureInfoPointerArrayPointer);
         TexturePointers = reader.ReadSpan<ulong>(header.TextureContainer.TextureCount);
 
         if (reader.Endianness.IsNotSystemEndianness()) {
