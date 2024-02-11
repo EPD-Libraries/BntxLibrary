@@ -22,13 +22,13 @@ public class BntxTexture
     public uint Alignment { get; set; }
     public ChannelSourceInfo ChannelInfo { get; set; }
     public ImageDimension Dimension { get; set; }
-    public byte[] Data { get; set; } = [];
+    public byte[][] MipMaps { get; set; } = [];
 
     // TODO: User Data?
 
     public static BntxTexture FromTextureView(in BntxTextureView tex)
     {
-        return new() {
+        BntxTexture texture = new() {
             Flags = tex.Info.TextureInfo.Flags,
             StorageDimension = tex.Info.TextureInfo.StorageDimension,
             TileMode = tex.Info.TextureInfo.TileMode,
@@ -46,7 +46,13 @@ public class BntxTexture
             Alignment = tex.Info.Alignment,
             ChannelInfo = tex.Info.ChannelSourceInfo,
             Dimension = tex.Info.TextureDimension,
-            Data = tex.TextureData.ToArray()
+            MipMaps = new byte[tex.Info.TextureInfo.MipCount][]
         };
+
+        for (int i = 0; i < tex.Info.TextureInfo.MipCount; i++) {
+            texture.MipMaps[i] = tex[i].ToArray();
+        }
+
+        return texture;
     }
 }
