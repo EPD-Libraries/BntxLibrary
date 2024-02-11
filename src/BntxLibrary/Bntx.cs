@@ -1,6 +1,7 @@
 ﻿using BntxLibrary.Extensions;
 using BntxLibrary.Structures.Common;
 using BntxLibrary.Structures.Graphics;
+using BntxLibrary.Writers;
 using Revrs;
 
 namespace BntxLibrary;
@@ -45,5 +46,32 @@ public class Bntx : Dictionary<string, BntxTexture>
         }
 
         return result;
+    }
+
+    public byte[] ToBinary(Endianness? endianness = null)
+    {
+        endianness ??= Endianness;
+
+        using MemoryStream ms = new();
+        WriteBinary(ms, endianness.Value);
+        return ms.ToArray();
+    }
+
+    public void WriteBinary(byte[] buffer, Endianness? endianness = null)
+    {
+        endianness ??= Endianness;
+
+        using MemoryStream ms = new(buffer);
+        WriteBinary(ms, endianness.Value);
+    }
+
+    public void WriteBinary(in Stream stream, Endianness? endianness = null)
+    {
+        endianness ??= Endianness;
+        using BntxWriter writer = new(this, stream, endianness.Value);
+        writer.ReserveMemoryPool(/* Use the default memory pool size of 0x140 */);
+        writer.WriteTextureDictionary();
+        writer.SkipTextureInfoArray();
+        writer.WriteTextureData();
     }
 }
