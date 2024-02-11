@@ -14,7 +14,7 @@ public struct BinaryFileHeader
     public ushort RelocationFlag;
     public ushort FirstBlockOffset;
     public uint RelocationTableOffset;
-    public uint FileSize;
+    public int FileSize;
 
     public class Reverser : IStructReverser
     {
