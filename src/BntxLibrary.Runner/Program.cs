@@ -21,8 +21,8 @@ writer.WriteLine($"RelocationTableOffset: {bntx.Header.BinaryFileHeader.Relocati
 writer.WriteLine($"FileSize: {bntx.Header.BinaryFileHeader.FileSize}");
 writer.WriteLine($"TargetPlatform: {bntx.Header.TextureContainer.TargetPlatform}");
 writer.WriteLine($"TextureCount: {bntx.Header.TextureContainer.TextureCount}");
-writer.WriteLine($"TextureInfoArrayPointer: {bntx.Header.TextureContainer.TextureInfoArrayPointer}");
-writer.WriteLine($"DataSize: {bntx.Header.TextureContainer.DataSize}");
+writer.WriteLine($"TextureInfoPointerArrayPointer: {bntx.Header.TextureContainer.TextureInfoPointerArrayPointer}");
+writer.WriteLine($"TextureDataPointer: {bntx.Header.TextureContainer.TextureDataPointer}");
 writer.WriteLine($"DictionaryPointer: {bntx.Header.TextureContainer.DictionaryPointer}");
 writer.WriteLine($"MemoryPoolPointer: {bntx.Header.TextureContainer.MemoryPoolPointer}");
 writer.WriteLine($"UserMemoryPoolPointer: {bntx.Header.TextureContainer.UserMemoryPoolPointer}");
