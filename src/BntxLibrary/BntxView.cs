@@ -44,8 +44,8 @@ public ref struct BntxView
 
             // This block is after the dictionary, but
             // to avoid a second condition I do it now
-            reader.Seek(header.TextureContainer.TextureInfoArrayPointer);
             for (int i = 0; i < header.TextureContainer.TextureCount; i++) {
+                reader.Seek(TexturePointers[i]);
                 BntxTextureView.Reverse(ref reader);
             }
         }
