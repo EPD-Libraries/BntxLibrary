@@ -15,9 +15,10 @@ public class Bntx : Dictionary<string, BntxTexture>
     };
 
     public Endianness Endianness { get; set; }
-    public int Alignment { get; set; } = 0x1000;
-    public int TargetAddressSize { get; set; } = 64;
+    public byte PackedAlignment { get; set; } = 12;
+    public byte TargetAddressSize { get; set; } = 64;
     public TargetPlatform TargetPlatform { get; set; } = TargetPlatform.NX;
+    public int Alignment => 1 << PackedAlignment;
 
     // TODO: UserData?
 
@@ -34,7 +35,7 @@ public class Bntx : Dictionary<string, BntxTexture>
             Name = bntxView.Name.ToManaged(),
             Version = bntxView.Header.BinaryFileHeader.Version,
             Endianness = bntxView.Header.BinaryFileHeader.BoM,
-            Alignment = 1 << bntxView.Header.BinaryFileHeader.PackedAlignment,
+            PackedAlignment = bntxView.Header.BinaryFileHeader.PackedAlignment,
             TargetAddressSize = bntxView.Header.BinaryFileHeader.TargetAddressSize,
             TargetPlatform = bntxView.Header.TextureContainer.TargetPlatform
         };
