@@ -160,10 +160,10 @@ The length of this array is defined in the header.
 
 The header is immediately followed by the `0x100`-byte in-place texture region and the `0x100`-byte in-place texture view region.
 
-| Offset  | Type        | Description         |
-| :------ | :---------- | :------------------ |
-| `0x0A0` | `u8[0x100]` | Texture Buffer      |
-| `0x1A0` | `u8[0x100]` | Texture View Buffer |
+| Offset  | Type        | Description                  |
+| :------ | :---------- | :--------------------------- |
+| `0x0A0` | `u8[0x100]` | In-place Texture Region      |
+| `0x1A0` | `u8[0x100]` | In-place Texture View Region |
 
 These two regions are followed by an array of pointers to the mip map data in the data block.
 
