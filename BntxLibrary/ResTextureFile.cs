@@ -35,5 +35,14 @@ public struct ResTextureFile
     public static unsafe void Swap(ResTextureFile* value, ResEndian* endian)
     {
         BinaryFileHeader.Swap(&value->Header);
+
+        if (endian->IsSerializing) {
+            ResTextureContainer.SwapData(&value->Container, endian);
+            ResTextureContainer.Swap(&value->Container);
+        }
+        else {
+            ResTextureContainer.Swap(&value->Container);
+            ResTextureContainer.SwapData(&value->Container, endian);
+        }
     }
 }

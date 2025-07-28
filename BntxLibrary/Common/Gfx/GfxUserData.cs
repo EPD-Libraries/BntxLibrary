@@ -5,7 +5,8 @@ using BntxLibrary.Common.Util;
 namespace BntxLibrary.Common.Gfx;
 
 [StructLayout(LayoutKind.Sequential, Size = 0x40)]
-public struct GfxUserData
+[Swappable]
+public partial struct GfxUserData
 {
     public BinaryPointer<BinaryString<byte>> Name;
     public BinaryPointer<byte> Value;
@@ -43,12 +44,8 @@ public struct GfxUserData
         get => new(Value.GetPtr(), Count);
     }
 
-    public static unsafe void Swap(GfxUserData* value, ResEndian* endian)
+    public static unsafe void SwapData(GfxUserData* value, ResEndian* endian)
     {
-        BinaryPointer<BinaryString<byte>>.Swap(&value->Name);
-        BinaryPointer<byte>.Swap(&value->Value);
-        EndianUtils.Swap(&value->Count);
-
         if (value->Type is GfxUserDataType.Int or GfxUserDataType.Float) {
             uint* ptr = (uint*)value->Value.ToPtr(endian->Base);
             for (int i = 0; i < value->Count; i++, ptr++) {
