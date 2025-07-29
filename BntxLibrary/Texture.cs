@@ -16,7 +16,7 @@ public sealed class Texture
 
     public required List<TextureData> ArrayLayers { get; set; }
     
-    internal static unsafe Texture FromRes(ulong basePtr, BinaryPointer<ResTextureInfo>* binaryPointer)
+    internal static unsafe Texture FromRes(BinaryPointer<ResTextureInfo>* binaryPointer)
     {
         ResTextureInfo* resTextureInfo = binaryPointer->GetPtr();
         
@@ -25,8 +25,8 @@ public sealed class Texture
                 $"Invalid TextureInfo magic. Expected 'BRTI' but found '0x{resTextureInfo->Header.Magic:x}'");
         }
         
-        int arrayLayerCount = resTextureInfo->Info.ArrayLayers;
-        List<TextureData> layers = arrayLayerCount == 0 ? [] : new List<TextureData>(resTextureInfo->Info.ArrayLayers);
+        int arrayLayerCount = resTextureInfo->Info.ArrayLength;
+        List<TextureData> layers = arrayLayerCount == 0 ? [] : new List<TextureData>(resTextureInfo->Info.ArrayLength);
         
         if (arrayLayerCount == 0) {
             goto ReturnEmptyTexture;
@@ -35,7 +35,7 @@ public sealed class Texture
         BinaryPointer<byte>* mipMapLevels = resTextureInfo->MipMaps.GetPtr();
         int mipMapLayerCount = resTextureInfo->Info.MipLevels;
         
-        uint textureSize = resTextureInfo->TextureSize;
+        uint textureSize = resTextureInfo->TextureDataSize;
         ulong mipMapDataStart = (ulong)mipMapLevels->GetPtr();
         
         for (int arrayLayerIndex = 0; arrayLayerIndex < arrayLayerCount; arrayLayerIndex++) {
@@ -60,8 +60,8 @@ public sealed class Texture
     ReturnEmptyTexture:
         return new Texture {
             Info = resTextureInfo->Info,
-            Alignment = resTextureInfo->TextureDataAlignment,
-            Channels = TextureChannels.FromFixed(resTextureInfo->ChannelSources),
+            Alignment = resTextureInfo->Alignment,
+            Channels = TextureChannels.FromFixed(resTextureInfo->ChannelMapping),
             UserData = UserData.FromRes(resTextureInfo),
             ArrayLayers = layers
         };

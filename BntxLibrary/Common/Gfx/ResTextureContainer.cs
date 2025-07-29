@@ -21,6 +21,8 @@ public partial struct ResTextureContainer
     public static unsafe void SwapData(ResTextureContainer* value, ResEndian* endian)
     {
         BinaryPointer<ResTextureInfo>* texturePointers = value->Textures.ToPtr(endian->Base);
+        ResDic* textureNames = value->TextureNames.ToPtr(endian->Base);
+        
         if (endian->IsSerializing) {
             for (uint i = 0; i < value->TextureCount; i++) {
                 ResTextureInfo* textureInfo = texturePointers[i].ToPtr(endian->Base);
@@ -28,6 +30,9 @@ public partial struct ResTextureContainer
                 ResTextureInfo.Swap(textureInfo);
                 BinaryPointer<ResTextureInfo>.Swap(&texturePointers[i]);
             }
+            
+            ResDic.SwapData(textureNames);
+            ResDic.Swap(textureNames);
         }
         else {
             for (uint i = 0; i < value->TextureCount; i++) {
@@ -36,6 +41,9 @@ public partial struct ResTextureContainer
                 ResTextureInfo.Swap(textureInfo);
                 ResTextureInfo.SwapData(textureInfo, endian);
             }
+            
+            ResDic.Swap(textureNames);
+            ResDic.SwapData(textureNames);
         }
     }
 }

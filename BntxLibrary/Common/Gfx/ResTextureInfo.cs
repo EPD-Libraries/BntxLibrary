@@ -13,29 +13,24 @@ public partial struct ResTextureInfo
 
     public BinaryBlockHeader Header;
     public TextureInfo Info;
-    public unsafe fixed byte PackagedTextureLayout[4];
-    private unsafe fixed byte _reserved1[0x14];
-    public uint TextureSize;
-    public int TextureDataAlignment;
-    private unsafe fixed byte _channelSources[4];
+    public uint TextureDataSize;
+    public int Alignment;
+    private unsafe fixed byte _channelMapping[4];
     public ImageDimension ImageDimension;
-    private unsafe fixed byte _reserved2[3];
+    private unsafe fixed byte _reserved[3];
     public BinaryPointer<BinaryString<byte>> TextureName;
     private BinaryPointer<byte> _parent;
     public BinaryPointer<BinaryPointer<byte>> MipMaps;
     public BinaryPointer<GfxUserData> UserData;
     public BinaryPointer<byte> TextureRegion;
     public BinaryPointer<byte> TextureViewRegion;
-
-    [NeverSwap]
-    public DescriptorSlot RuntimeDescriptorSlot;
-
+    public DescriptorSlot UserDescriptorSlot;
     public BinaryPointer<ResDic> UserDataNames;
 
-    public unsafe ChannelSource* ChannelSources {
+    public unsafe ChannelSource* ChannelMapping {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         get {
-            fixed (byte* ptr = _channelSources) {
+            fixed (byte* ptr = _channelMapping) {
                 return (ChannelSource*)ptr;
             }
         }

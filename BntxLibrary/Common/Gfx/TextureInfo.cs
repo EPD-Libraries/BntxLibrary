@@ -14,20 +14,21 @@ public enum TextureInfoFlags : byte
 /// nn::gfx::TextureInfo
 /// </summary>
 [Swappable]
-public partial struct TextureInfo
+public unsafe partial struct TextureInfo
 {
     public TextureInfoFlags Flags;
-    public ImageStorageDimension StorageDimension;
+    public ImageStorageDimension ImageStorageDimension;
     public TileMode TileMode;
     public ushort Swizzle;
     public ushort MipLevels;
     public ushort SampleCount;
-    private ushort _reserved;
+    private fixed byte _reserved2[2];
     public ImageFormat ImageFormat;
     public GpuAccessFlags GpuAccessFlags;
     public int Width;
     public int Height;
     public int Depth;
-    public int ArrayLayers;
-    public uint PackagedTextureLayout;
+    public int ArrayLength;
+    public fixed byte TextureLayout[8];
+    private fixed byte _reserved[20];
 }

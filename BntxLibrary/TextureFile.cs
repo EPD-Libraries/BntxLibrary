@@ -59,7 +59,7 @@ public sealed unsafe class TextureFile
                 throw new InvalidDataException($"Texture name at {i} was unexpectedly null.");
             }
             
-            Textures.Add(key, Texture.FromRes((ulong)bntx, &bntx->Container.Textures.GetPtr()[i]));
+            Textures.Add(key, Texture.FromRes(&bntx->Container.Textures.GetPtr()[i]));
         }
     }
     

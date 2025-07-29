@@ -5,8 +5,6 @@ public struct StringPool : ISwappable<StringPool>
     public const uint Magic = 0x5254535F;
     
     public BinaryBlockHeader Header;
-    private uint _reserved8;
-    private uint _reservedC;
     public int Length;
     private BinaryString<byte> _dummyString;
 

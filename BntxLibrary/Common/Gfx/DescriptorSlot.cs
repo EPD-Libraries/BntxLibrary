@@ -6,5 +6,8 @@ namespace BntxLibrary.Common.Gfx;
 /// nn::gfx::DescriptorSlot<br/>
 /// Runtime descriptor slot for the registered Texture + TextureView
 /// </summary>
-[StructLayout(LayoutKind.Sequential, Size = 8)]
-public struct DescriptorSlot;
+[Swappable]
+public partial struct DescriptorSlot
+{
+    public ulong Value;
+}

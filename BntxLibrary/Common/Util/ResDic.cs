@@ -8,6 +8,8 @@ public unsafe partial struct ResDic
     [NeverSwap]
     public uint Magic;
     public int EntryCount;
+    
+    [NeverSwap]
     public ResDicEntry FirstEntry;
     
     public ref ResDicEntry FindEntry(in StringView key) => ref FindEntry(key.Value);
@@ -89,6 +91,15 @@ public unsafe partial struct ResDic
         }
 
         return -1;
+    }
+
+    public static void SwapData(ResDic* value)
+    {
+        ResDicEntry* first = &value->FirstEntry;
+        for (int i = 0; i < value->EntryCount; ++i) {
+            ResDicEntry.Swap(first);
+            first++;
+        }
     }
 }
 
